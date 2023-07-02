@@ -18,6 +18,6 @@ urlpatterns = [
     
     #forgot Password
     path('forgot_password/', views.forgotPassword, name='forgot-password'),
-    path('reset_password_validate/<uidb64><token>/', views.reset_password_validate, name='reset-password-validate'),
+    path('reset_password_validate/<uidb64>/<token>/', views.reset_password_validate, name='reset-password-validate'),
     path('reset_password/', views.resetPassword, name='reset-password'),
 ]

@@ -6,7 +6,8 @@ from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMessage, get_connection
+from django.core import mail
 from django.conf import settings
 
 def detectUser(user):
@@ -32,8 +33,9 @@ def send_verification_email(request, user, mail_subject, email_template):
         'token': default_token_generator.make_token(user), # generates a token for each user
     })
     to_email = user.email
-    mail = EmailMessage(mail_subject, message, from_email, to=[to_email])
-    mail.send(fail_silently=False)
+    with mail.get_connection() as connection:
+        mail.EmailMessage(mail_subject, message, from_email, to=[to_email], connection=connection).send(fail_silently=False)
+
 
 # def send_password_reset(request, user):
 #     from_email = settings.DEFAULT_FROM_EMAIL # gets the default name
