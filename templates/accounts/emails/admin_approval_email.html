@@ -1,0 +1,11 @@
+{% autoescape off %} 
+
+Hi {{user.first_name}},
+
+{% if is_approved %}
+Congratulations! Your Restaurant has been Approved By FoodieHub Team -- FoodieHub
+{% else %}
+We're sorry! Your Restaurant is not Eligible to be Published on the Marketplace, Please contact support@foodiehub.com -- FoodieHub
+{% endif %}
+
+{% endautoescape %}
