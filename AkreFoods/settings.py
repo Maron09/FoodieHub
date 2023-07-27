@@ -66,7 +66,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'accounts.context_processors.get_vendor' #Returns a function that can be loaded on all html files
+                'accounts.context_processors.get_vendor', #Returns a function that can be loaded on all html files
+                'accounts.context_processors.get_google_api', # Returns the google api
             ],
         },
     },
@@ -156,3 +157,6 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool)
 EMAIL_USE_SSL = config('EMAIL_USE_SSL', cast=bool)
 DEFAULT_FROM_EMAIL = 'FoodieHub Market <paulezra99@gmail.com>' # gives it a default name 
+
+
+GOOGLE_API_KEY = 'AIzaSyC4yTudrg9pTcB2khAgrbCMBfVvbviOhVU'
