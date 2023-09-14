@@ -7,6 +7,7 @@ from .models import *
 from .utils import *
 from django.core.exceptions import PermissionDenied
 from vendor.models import *
+from django.template.defaultfilters import slugify
 
 # Restrict the vendor from accessing the customer page
 def check_role_vendor(user):
@@ -54,7 +55,10 @@ def registerUser(request):
 
 
 def registerVendor(request):
-    if request.method == 'POST':
+    if request.user.is_authenticated:
+        messages.warning(request, 'Already logged in')
+        return redirect('my-account')
+    elif request.method == 'POST':
         form = UserForm(request.POST)
         v_form = VendorForm(request.POST, request.FILES) # request.FILES receives files 
         if form.is_valid() and v_form.is_valid():
@@ -65,6 +69,8 @@ def registerVendor(request):
             user.save()  
             vendor = v_form.save(commit=False)
             vendor.user = user
+            vendor_name = v_form.cleaned_data['vendor_name']
+            vendor.vendor_slug = slugify(vendor_name)+'-'+str(user.id) # makes it unique
             user_profile =  UserProfile.objects.get(user=user)
             vendor.user_profile = user_profile
             vendor.save()

@@ -39,9 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
     'accounts.apps.AccountsConfig',
     'vendor.apps.VendorConfig',
     'menu.apps.MenuConfig',
+    'marketplace.apps.MarketplaceConfig',
 ]
 
 MIDDLEWARE = [
@@ -52,6 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'marketplace.middlewares.AjaxMiddleware',
 ]
 
 ROOT_URLCONF = 'AkreFoods.urls'
@@ -69,6 +72,8 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'accounts.context_processors.get_vendor', #Returns a function that can be loaded on all html files
                 'accounts.context_processors.get_google_api', # Returns the google api
+                'marketplace.context_processors.get_cart_counter',
+                'marketplace.context_processors.get_cart_amount',
             ],
         },
     },
