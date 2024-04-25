@@ -30,4 +30,7 @@ urlpatterns = [
     
     #Cart
     path('cart/', CartPage.cartPage, name='cart'),
+    
+    #search
+    path('search/', CartPage.searchPage, name='search'),
 ] +  static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

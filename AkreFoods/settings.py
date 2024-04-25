@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 from decouple import config
 from django.contrib.messages import constants as messages
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -44,6 +45,7 @@ INSTALLED_APPS = [
     'vendor.apps.VendorConfig',
     'menu.apps.MenuConfig',
     'marketplace.apps.MarketplaceConfig',
+    'django.contrib.gis', # to load the location
 ]
 
 MIDDLEWARE = [
@@ -87,7 +89,8 @@ WSGI_APPLICATION = 'AkreFoods.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        # 'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis', # uses the spatial database
         'NAME': config('DB_NAME'),
         'USER': config('DB_USER'),
         'PASSWORD': config('DB_PASSWORD'),
@@ -165,4 +168,9 @@ EMAIL_USE_SSL = config('EMAIL_USE_SSL', cast=bool)
 DEFAULT_FROM_EMAIL = 'FoodieHub Market <paulezra99@gmail.com>' # gives it a default name 
 
 
-GOOGLE_API_KEY = 'AIzaSyC4yTudrg9pTcB2khAgrbCMBfVvbviOhVU'
+GOOGLE_API_KEY = 'AIzaSyAqfYlQ6lnMr1TQsYbaaygeYPKQVJz4hJo'
+
+
+os.environ['PATH'] = os.path.join(BASE_DIR, 'env', 'Lib', 'site-packages', 'osgeo') + ';' + os.environ['PATH']
+os.environ['PROJ_LIB'] = os.path.join(BASE_DIR, 'env', 'Lib', 'site-packages', 'osgeo', 'data', 'proj') + ';' + os.environ.get('PROJ_LIB', '')
+GDAL_LIBRARY_PATH = os.path.join(BASE_DIR, 'env', 'Lib', 'site-packages', 'osgeo', 'gdal304.dll')

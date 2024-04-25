@@ -2,6 +2,9 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db.models.fields.related import ForeignKey, OneToOneField
 
+from django.contrib.gis.db import models as gis_models
+from django.contrib.gis.geos import Point
+
 
 
 
@@ -98,10 +101,17 @@ class UserProfile(models.Model):
     pin_code = models.CharField(max_length=6, blank=True, null=True)
     latitude = models.CharField(max_length=20, blank=True, null=True)
     longitude = models.CharField(max_length=20, blank=True, null=True)
+    locations = gis_models.PointField(blank=True, null=True, srid=4326) # srid is a unique identifier and the default value is 4326
     created_at = models.DateTimeField(auto_now_add=True)
     modeified_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         return self.user.email
-
+    
+    #once a user enters thier location it creates a point of the exact location specified
+    def save(self, *args, **kwargs):
+        if self.latitude and self.longitude:
+            self.locations = Point(float(self.longitude), float(self.latitude))
+            return super(UserProfile, self).save(*args, **kwargs)
+        return super(UserProfile, self).save(*args, **kwargs)
 
