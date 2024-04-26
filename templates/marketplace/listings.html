@@ -29,9 +29,9 @@
 												<div class="img-holder">
 													<figure>
                                                     {% if vendor.user_profile.profile_picture %}
-                                                    <a href="#"><img src="{{vendor.user_profile.profile_picture.url}}" class="img-thumb wp-post-image" alt=""></a>
+                                                    <a href="{% url 'vendor_detail' vendor.vendor_slug %}"><img src="{{vendor.user_profile.profile_picture.url}}" class="img-thumb wp-post-image" alt=""></a>
                                                     {%  else%}
-                                                    <a href="#"><img src="{% static 'images/default-profile.png' %}" class="img-thumb wp-post-image" alt=""></a>
+                                                    <a href="{% url 'vendor_detail' vendor.vendor_slug %}"><img src="{% static 'images/default-profile.png' %}" class="img-thumb wp-post-image" alt=""></a>
                                                     {% endif %}
 													</figure>
 													<span class="restaurant-status close"><em class="bookmarkRibbon"></em>Close</span>

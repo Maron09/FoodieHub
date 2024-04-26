@@ -33,7 +33,7 @@ def vendor_detail(request, vendor_slug):
             'products',
             queryset=Product.objects.filter(is_available=True)
         )
-    ) # prefetch looks for the data in a reverse manner eg. if a model is not in maodel that has been called but want to get the item that is related to the model
+    ) # prefetch looks for the data in a reverse manner eg. if a model is not in model that has been called but want to get the item that is related to the model
     
     if request.user.is_authenticated:
         cart_items = Cart.objects.filter(user=request.user)
