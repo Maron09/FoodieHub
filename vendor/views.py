@@ -1,3 +1,5 @@
+from django.db import IntegrityError
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import *
 from accounts.forms import *
@@ -175,3 +177,46 @@ def deleteFood(request, pk=None):
     food.delete()
     messages.success(request, 'Food deleted Succesfully')
     return redirect('fooditem_by_cat', food.category.id)
+
+
+
+def opening_hour(request):
+    opening_hours = Opening_hour.objects.filter(vendor=get_vendor(request))
+    form = OpeningHourForm()
+    context = {
+        'form': form,
+        'opening_hours': opening_hours
+    }
+    return render(request,'vendor/open_hours.html', context)
+
+
+def addOpenHours(request):
+    # handle the data and save to the database
+    if request.user.is_authenticated:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest' and request.method == 'POST':
+            day = request.POST.get('day')
+            from_hour = request.POST.get('from_hour')
+            to_hour = request.POST.get('to_hour')
+            is_closed = request.POST.get('is_closed')
+            try:
+                hour = Opening_hour.objects.create(vendor=get_vendor(request),day=day, from_hour=from_hour, to_hour=to_hour, is_closed=is_closed)
+                if hour:
+                    day = Opening_hour.objects.get(id=hour.id)
+                    if day.is_closed:
+                        response = {'status': 'success', 'id': hour.id, 'day':  day.get_day_display(), 'is_closed': 'Closed'}
+                    else:
+                        response = {'status': 'success', 'id': hour.id, 'day': day.get_day_display(), 'from_hour': hour.from_hour, 'to_hour': to_hour}
+                return JsonResponse(response)
+            except IntegrityError as e:
+                response = {'status': 'failed', 'message': from_hour+'-'+to_hour+ ' already exists for this day!'}
+                return JsonResponse(response)
+        else:
+            HttpResponse('Invalid request')
+
+
+def removeOpenHours(request, pk=None):
+    if request.user.is_authenticated:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            hour = get_object_or_404(Opening_hour, pk=pk)
+            hour.delete()
+            return JsonResponse({'status': 'success', 'id': pk})

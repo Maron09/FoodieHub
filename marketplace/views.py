@@ -1,3 +1,4 @@
+from datetime import date, datetime
 from django.shortcuts import redirect, render
 from django.http import HttpResponse, JsonResponse
 from vendor.models import *
@@ -35,6 +36,16 @@ def vendor_detail(request, vendor_slug):
         )
     ) # prefetch looks for the data in a reverse manner eg. if a model is not in model that has been called but want to get the item that is related to the model
     
+    opening_hours = Opening_hour.objects.filter(vendor=vendor).order_by('day', '-from_hour')
+    
+    # Check current day's opening hours
+    today_date = date.today()
+    today = today_date.isoweekday() # this returns the numerical value of the day of the week just like in the model
+    
+    current_opening_hours = Opening_hour.objects.filter(vendor=vendor, day=today)
+    
+    
+    
     if request.user.is_authenticated:
         cart_items = Cart.objects.filter(user=request.user)
     else:
@@ -43,7 +54,9 @@ def vendor_detail(request, vendor_slug):
     context = {
         'vendor': vendor,
         'categories': categories,
-        'cart_items': cart_items
+        'cart_items': cart_items,
+        'opening_hours': opening_hours,
+        'current_opening_hours': current_opening_hours,
     }
     return render(request,'marketplace/vendor_detail.html', context)
 
