@@ -31,17 +31,17 @@
                                         {% if cart_items %}
                                             {% for item in cart_items %}
                                             <li id="cart-item-{{item.id}}">
-                                                <div class="image-holder"><img src="{{item.fooditems.image.url}}" alt=""></div>
+                                                <div class="image-holder"><img src="{{item.fooditem.image.url}}" alt=""></div>
                                                 <div class="text-holder">
-                                                    <h6>{{item.fooditems}}</h6>
-                                                    <span>{{item.fooditems.description}}</span>
-                                                    <a href="{% url 'vendor_detail' item.fooditems.vendor.vendor_slug %}" class="badge badge-warning">{{item.fooditems.vendor}}</a>
+                                                    <h6>{{item.fooditem}}</h6>
+                                                    <span>{{item.fooditem.description}}</span>
+                                                    <a href="{% url 'vendor_detail' item.fooditem.vendor.vendor_slug %}" class="badge badge-warning">{{item.fooditem.vendor}}</a>
                                                 </div>
                                                 <div class="price-holder">
-                                                    <span class="price">₦{{item.fooditems.price}}</span>
-                                                    <a href="#" class="add_to_cart" style="margin-right: 28px;" data-id="{{item.fooditems.id}}" data-url="{% url 'add_to_cart' item.fooditems.id %}"><i class="icon-plus4 text-color"></i></a>
-                                                    <label id="qty-{{item.fooditems.id}}">0</label>
-                                                    <a href="#" class="decrease_cart" data-id="{{item.fooditems.id}}" id="{{item.id}}" data-url="{% url 'decrease_cart' item.fooditems.id %}"><i class="icon-minus text-color"></i></a>
+                                                    <span class="price">₦{{item.fooditem.price}}</span>
+                                                    <a href="#" class="add_to_cart" style="margin-right: 28px;" data-id="{{item.fooditem.id}}" data-url="{% url 'add_to_cart' item.fooditem.id %}"><i class="icon-plus4 text-color"></i></a>
+                                                    <label id="qty-{{item.fooditem.id}}">0</label>
+                                                    <a href="#" class="decrease_cart" data-id="{{item.fooditem.id}}" id="{{item.id}}" data-url="{% url 'decrease_cart' item.fooditem.id %}"><i class="icon-minus text-color"></i></a>
                                                     <a href="#" class="delete_cart" style="margin-right: 28px;" data-id="{{item.id}}" data-url="{% url 'delete_cart' item.id %}"><i class="icon-delete text-color"></i></a>
                                                     
                                                 </div>
@@ -58,7 +58,7 @@
 
                                     {% for item in cart_items %}
 
-                                        <span id="qty-{{item.fooditems.id}}" class="item_qty" data-qty="{{ item.quantity }}"="">{{ item.quantity }}</span>
+                                        <span id="qty-{{ item.fooditem.id }}" class="item_qty d-none" data-qty="{{ item.quantity }}"="">{{ item.quantity }}</span>
 
                                     {% endfor %}
                                 </div>
@@ -88,13 +88,19 @@
                                                     <span id="subtotal">{{subtotal}}</span>
                                                 </span>
                                             </li>
-                                            <li style="list-style-type: none;">
-                                                Tax
-                                                <span class="price float-right">
-                                                    <span class="currency">₦</span>
-                                                    <span id="tax">{{tax}}</span>
-                                                </span>
-                                            </li>
+
+                                            {% for key, value in tax_dict.items %}
+                                                {% for i, j in value.items %}
+                                                    <li style="list-style-type: none;">
+                                                        {{key}} <small>({{i}}%)</small>
+                                                        <span class="price float-right">
+                                                            <span class="currency">₦</span>
+                                                            <span id="tax-{{key}}">{{j}}</span>
+                                                        </span>
+                                                    </li>
+                                                {% endfor %}
+                                            {% endfor %}
+
                                             <li style="list-style-type: none; font-weight: 600;">
                                                 Total
                                                 <span class="price float-right">

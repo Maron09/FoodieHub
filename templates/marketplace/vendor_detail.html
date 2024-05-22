@@ -111,18 +111,17 @@
                                         </div>
                                         <ul>
                                             {% for food in category.products.all %}
-                                            <li>
+                                            <li id="cart-item-{{ food.id }}">
                                                 <div class="image-holder"><img src="{{food.image.url}}" alt=""></div>
                                                 <div class="text-holder">
                                                     <h6>{{food}}</h6>
-                                                    <span>{{food.description}}</span>
+                                                    <span>{{ food.description }}</span>
                                                 </div>
                                                 <div class="price-holder">
-                                                    <span class="price">₦{{food.price}}</span>
-                                                    <a href="#" class="add_to_cart" style="margin-right: 28px;" data-id="{{food.id}}" data-url="{% url 'add_to_cart' food.id %}"><i class="icon-plus4 text-color"></i></a>
-                                                    <label id="qty-{{food.id}}">0</label>
-                                                    <a href="#" class="decrease_cart" data-id="{{food.id}}" data-url="{% url 'decrease_cart' food.id %}"><i class="icon-minus text-color"></i></a>
-                                                    
+                                                    <span class="price">₦{{ food.price }}</span>
+                                                    <a href="#" class="decrease_cart" style="margin-right: 28px;" data-id="{{ food.id }}" data-url="{% url 'decrease_cart' food.id %}"><i class="icon-minus text-color"></i></a>
+                                                    <label id="qty-{{ food.id }}">0</label>
+                                                    <a href="#" class="add_to_cart" data-id="{{ food.id }}" data-url="{% url 'add_to_cart' food.id %}"><i class="icon-plus4 text-color"></i></a>
                                                 </div>
                                             </li>
                                             {% endfor %}
@@ -132,7 +131,7 @@
 
                                     {% for item in cart_items %}
 
-                                        <span id="qty-{{item.fooditems.id}}" class="item_qty" data-qty="{{ item.quantity }}"="">{{ item.quantity }}</span>
+                                        <span id="qty-{{item.fooditems.id}}" class="item_qty d-none" data-qty="{{ item.quantity }}"="">{{ item.quantity }}</span>
 
                                     {% endfor %}
                                 </div>

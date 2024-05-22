@@ -62,23 +62,34 @@ def vendor_detail(request, vendor_slug):
 
 
 def addToCart(request, food_id):
-    
     if request.user.is_authenticated:
-        if request.is_ajax():
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             # check if food exists
             try:
                 fooditem = Product.objects.get(id=food_id)
                 # check if user has added the food to the cart
                 try:
-                    checkCart = Cart.objects.get(user=request.user, fooditems=fooditem)
-                    #increase cart quantity
-                    checkCart.quantity += 1
-                    checkCart.save()
-                    return JsonResponse({'status': 'success', 'message': 'Cart increased', 'cart_counter': get_cart_counter(request), 'qty': checkCart.quantity, 'cart_amount': get_cart_amount(request)})
+                    checkCart = Cart.objects.filter(user=request.user, fooditem=fooditem).first()
+                    if checkCart:
+                        # increase cart quantity
+                        checkCart.quantity += 1
+                        checkCart.save()
+                    else:
+                        # creates one if it doesn't exist
+                        checkCart = Cart.objects.create(user=request.user, fooditem=fooditem, quantity=1)
+
+                    cart_amount = get_cart_amount(request)
+                    cart_amount = {k: float(v) if isinstance(v, Decimal) else v for k, v in cart_amount.items()}
+
+                    return JsonResponse({
+                        'status': 'success', 
+                        'message': 'Cart increased', 
+                        'cart_counter': get_cart_counter(request), 
+                        'qty': checkCart.quantity, 
+                        'cart_amount': cart_amount
+                    })
                 except:
-                    # creates one if it doesn't exist
-                    checkCart = Cart.objects.create(user=request.user, fooditems=fooditem, quantity=1)
-                    return JsonResponse({'status': 'success', 'message': 'Food added to Cart', 'cart_counter': get_cart_counter(request), 'qty': checkCart.quantity, 'cart_amount': get_cart_amount(request)})
+                    return JsonResponse({'status': 'Failed', 'message': 'Could not add food to cart'})
             except Product.DoesNotExist:
                 return JsonResponse({'status': 'Failed', 'message': 'Food does not exist'})
         else:
@@ -90,28 +101,28 @@ def addToCart(request, food_id):
 
 def decreaseCart(request, food_id):
     if request.user.is_authenticated:
-        if request.is_ajax():
-            # check if food exists
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             try:
                 fooditem = Product.objects.get(id=food_id)
-                print(f'food_id: {food_id}')
-                # check if user has added the food to the cart
-                try:
-                    checkCart = Cart.objects.get(user=request.user, fooditems=fooditem)
+                checkCart = Cart.objects.filter(user=request.user, fooditem=fooditem).first()
+                if checkCart:
                     if checkCart.quantity > 1:
-                        #decrease cart quantity
                         checkCart.quantity -= 1
                         checkCart.save()
                     else:
                         checkCart.delete()
-                        checkCart.quantity = 0
-                    return JsonResponse({'status': 'success', 'cart_counter': get_cart_counter(request), 'qty': checkCart.quantity, 'cart_amount': get_cart_amount(request)})
-                except:
-                    return JsonResponse({'status': 'Failed', 'message': 'Food not in Cart'})
+                    cart_counter = get_cart_counter(request)
+                    cart_amount = get_cart_amount(request)
+                    return JsonResponse({
+                        'status': 'success', 
+                        'cart_counter': cart_counter, 
+                        'qty': checkCart.quantity if checkCart else 0, 
+                        'cart_amount': cart_amount
+                    })
+                return JsonResponse({'status': 'Failed', 'message': 'Food not in cart'})
             except Product.DoesNotExist:
                 return JsonResponse({'status': 'Failed', 'message': 'Food does not exist'})
-        else:
-            return JsonResponse({'status': 'Failed', 'message': 'Invalid Request'})
+        return JsonResponse({'status': 'Failed', 'message': 'Invalid Request'})
     else:
         return JsonResponse({'status': 'login_required', 'message': 'Login to Continue'})
 
@@ -126,17 +137,25 @@ def cartPage(request):
 
 def deleteItem(request, cart_id):
     if request.user.is_authenticated:
-        if request.is_ajax():
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             try:
-                #if item exist
-                cart_item= Cart.objects.filter(user=request.user, id=cart_id)
+                cart_item = Cart.objects.filter(user=request.user, id=cart_id).first()
                 if cart_item:
                     cart_item.delete()
-                    return JsonResponse({'status': 'success', 'message': 'Item Deleted', 'cart_counter': get_cart_counter(request),'cart_amount': get_cart_amount(request)})
-            except:
+                    cart_counter = get_cart_counter(request)
+                    cart_amount = get_cart_amount(request)
+                    return JsonResponse({
+                        'status': 'success', 
+                        'message': 'Item deleted', 
+                        'cart_counter': cart_counter, 
+                        'cart_amount': cart_amount
+                    })
                 return JsonResponse({'status': 'Failed', 'message': 'Item does not exist'})
-        else:
-            return JsonResponse({'status': 'Failed', 'message': 'Invalid Request'})
+            except Exception as e:
+                return JsonResponse({'status': 'Failed', 'message': str(e)})
+        return JsonResponse({'status': 'Failed', 'message': 'Invalid Request'})
+    else:
+        return JsonResponse({'status': 'login_required', 'message': 'Login to Continue'})
 
 
 def searchPage(request):

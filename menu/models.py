@@ -37,10 +37,7 @@ class Product(models.Model):
     
     def __str__(self):
         return self.food_name
-    
-    @property
-    def formatted_price(self):
-        return intcomma(self.price, 2)
+
 
 
 
