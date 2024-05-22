@@ -1,8 +1,8 @@
 <div class="user-account-nav user-account-sidebar">
     <div class="user-nav-list">
         <ul>
-            <li class="{% if '/accounts/vendorDashboard/' == request.path or '/accounts/vendor/' == request.path %}active{% endif %}"><a href="{% url 'vendor-dashboard' %}"><i class="icon-dashboard3"></i>Dashboard</a></li>
-            <li class="{% if 'profile' in request.path %}active{% endif %}"><a href="{% url 'v-profile' %}"><i class="icon-building"></i>My Restaurant</a></li>
+            <li class="{% if '/vendorDashboard/' == request.path or '/vendor/' == request.path %}active{% endif %}"><a href="{% url 'vendor-dashboard' %}"><i class="icon-dashboard3"></i>Dashboard</a></li>
+            <li class="{% if '/profile/' in request.path %}active{% endif %}"><a href="{% url 'v-profile' %}"><i class="icon-building"></i>My Restaurant</a></li>
             <li class="{% if 'menu_builder' in request.path %}active{% endif %}"><a href="{% url 'menu_builder' %}"><i class="icon-menu5"></i>Menu Builder</a></li>
             <li class="{% if 'open_hours' in request.path %}active{% endif %}"><a href="{% url 'open_hours' %}"><i class="icon-menu5"></i>Opening Hours</a></li>
             <li class=""><a href="restaurant-orders.html"><i class="icon-add_shopping_cart"></i>Orders</a></li>

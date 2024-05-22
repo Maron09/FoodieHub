@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'menu.apps.MenuConfig',
     'marketplace.apps.MarketplaceConfig',
     'django.contrib.gis', # to load the location
+    'customers'
 ]
 
 MIDDLEWARE = [
@@ -73,6 +74,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'accounts.context_processors.get_vendor', #Returns a function that can be loaded on all html files
+                'accounts.context_processors.get_user_profile', #Returns a function that can be loaded on all html files
                 'accounts.context_processors.get_google_api', # Returns the google api
                 'marketplace.context_processors.get_cart_counter',
                 'marketplace.context_processors.get_cart_amount',
