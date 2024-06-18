@@ -43,6 +43,10 @@ def send_notification(mail_subject, mail_template, context):
         mail_template,
         context,
     )
-    to_email = context['user'].email
+    if(isinstance(context['to_email'], str)):
+        to_email = []
+        to_email.append(context['to_email'])
+    else:
+        to_email = context['to_email']
     with mail.get_connection() as connection:
-        mail.EmailMessage(mail_subject, message, from_email, to=[to_email], connection=connection).send(fail_silently=False)
+        mail.EmailMessage(mail_subject, message, from_email, to=to_email, connection=connection).send(fail_silently=False)

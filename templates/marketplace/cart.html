@@ -38,7 +38,7 @@
                                                     <a href="{% url 'vendor_detail' item.fooditem.vendor.vendor_slug %}" class="badge badge-warning">{{item.fooditem.vendor}}</a>
                                                 </div>
                                                 <div class="price-holder">
-                                                    <span class="price">₦{{item.fooditem.price}}</span>
+                                                    <span class="price">${{item.fooditem.price}}</span>
                                                     <a href="#" class="add_to_cart" style="margin-right: 28px;" data-id="{{item.fooditem.id}}" data-url="{% url 'add_to_cart' item.fooditem.id %}"><i class="icon-plus4 text-color"></i></a>
                                                     <label id="qty-{{item.fooditem.id}}">0</label>
                                                     <a href="#" class="decrease_cart" data-id="{{item.fooditem.id}}" id="{{item.id}}" data-url="{% url 'decrease_cart' item.fooditem.id %}"><i class="icon-minus text-color"></i></a>
@@ -84,7 +84,7 @@
                                             <li style="list-style-type: none;">
                                                 Subtotal
                                                 <span class="price float-right">
-                                                    <span class="currency">₦</span>
+                                                    <span class="currency">$</span>
                                                     <span id="subtotal">{{subtotal}}</span>
                                                 </span>
                                             </li>
@@ -94,7 +94,7 @@
                                                     <li style="list-style-type: none;">
                                                         {{key}} <small>({{i}}%)</small>
                                                         <span class="price float-right">
-                                                            <span class="currency">₦</span>
+                                                            <span class="currency">$</span>
                                                             <span id="tax-{{key}}">{{j}}</span>
                                                         </span>
                                                     </li>
@@ -104,10 +104,11 @@
                                             <li style="list-style-type: none; font-weight: 600;">
                                                 Total
                                                 <span class="price float-right">
-                                                    <span class="currency">₦</span>
+                                                    <span class="currency">$</span>
                                                     <span id="total">{{grand_total}}</span>
                                                 </span>
                                             </li>
+                                            <a href="{% url 'checkout' %}" class="btn btn-danger text-uppercase w-100 p-2 mt-3">proceed to checkout <i class="fa fa-sign-out"></i></a>
                                         </ul>
                                     </div>
                                     

@@ -19,7 +19,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from . import views
-from marketplace import views as CartPage
+from marketplace import views as MarketplaceViews
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -29,8 +29,14 @@ urlpatterns = [
     path('marketplace/', include('marketplace.urls')),
     
     #Cart
-    path('cart/', CartPage.cartPage, name='cart'),
+    path('cart/', MarketplaceViews.cartPage, name='cart'),
     
     #search
-    path('search/', CartPage.searchPage, name='search'),
+    path('search/', MarketplaceViews.searchPage, name='search'),
+    
+    # Checkout
+    path('checkout/', MarketplaceViews.CheckoutPage, name='checkout'),
+    
+    # Order
+    path('orders/', include('orders.urls')),
 ] +  static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

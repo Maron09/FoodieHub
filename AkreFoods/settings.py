@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'menu.apps.MenuConfig',
     'marketplace.apps.MarketplaceConfig',
     'django.contrib.gis', # to load the location
-    'customers'
+    'customers',
+    'orders'
 ]
 
 MIDDLEWARE = [
@@ -75,7 +76,8 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'accounts.context_processors.get_vendor', #Returns a function that can be loaded on all html files
                 'accounts.context_processors.get_user_profile', #Returns a function that can be loaded on all html files
-                'accounts.context_processors.get_google_api', # Returns the google api
+                'accounts.context_processors.get_google_api', # Returns the google api key
+                'accounts.context_processors.get_paypal_client_id', # Returns the paypal client id
                 'marketplace.context_processors.get_cart_counter',
                 'marketplace.context_processors.get_cart_amount',
             ],
@@ -170,9 +172,14 @@ EMAIL_USE_SSL = config('EMAIL_USE_SSL', cast=bool)
 DEFAULT_FROM_EMAIL = 'FoodieHub Market <onyebiezra@gmail.com>' # gives it a default name 
 
 
-GOOGLE_API_KEY = 'AIzaSyAqfYlQ6lnMr1TQsYbaaygeYPKQVJz4hJo'
+GOOGLE_API_KEY = config('GOOGLE_API_KEY')
 
 
 os.environ['PATH'] = os.path.join(BASE_DIR, 'env', 'Lib', 'site-packages', 'osgeo') + ';' + os.environ['PATH']
 os.environ['PROJ_LIB'] = os.path.join(BASE_DIR, 'env', 'Lib', 'site-packages', 'osgeo', 'data', 'proj') + ';' + os.environ.get('PROJ_LIB', '')
 GDAL_LIBRARY_PATH = os.path.join(BASE_DIR, 'env', 'Lib', 'site-packages', 'osgeo', 'gdal304.dll')
+
+PAYPAL_CLIENT_ID = config('PAYPAL_CLIENT_ID')
+
+# This allows for popups in django
+SECURE_CROSS_ORIGIN_OPENER_POLICY='same-origin-allow-popups'
