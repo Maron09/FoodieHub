@@ -1,4 +1,6 @@
 from django.shortcuts import render,redirect
+
+from orders.models import Order
 from .forms import *
 from django.contrib import messages, auth
 from django.contrib.auth.decorators import login_required, user_passes_test # activates custom decorators
@@ -145,7 +147,15 @@ def myAccount(request):
 @login_required(login_url='login')
 @user_passes_test(check_role_customer)
 def customerDashboard(request):
-    return render(request, 'accounts/customer_dashboard.html')
+    orders = Order.objects.filter(user=request.user, is_ordered=True)
+    recent_orders = orders[:5]
+    order_count = orders.count()
+    context = {
+        'orders': orders,
+        'order_count': order_count,
+        'recent_orders': recent_orders
+    }
+    return render(request, 'accounts/customer_dashboard.html', context)
 
 
 @login_required(login_url='login')
