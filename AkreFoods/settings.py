@@ -59,6 +59,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'marketplace.middlewares.AjaxMiddleware',
+    'orders.request_object.RequestObjectMiddleware', # custom middleware to access the request object in models.py
 ]
 
 ROOT_URLCONF = 'AkreFoods.urls'

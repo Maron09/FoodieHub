@@ -19,6 +19,65 @@ def PlaceOrder(request):
     if cart_count <= 0:
         return redirect('marketplace')
     
+    vendor_ids = list({i.fooditem.vendor.id for i in cart_items})
+    # print(vendor_ids)
+    
+    # calculating the subtotal for each vendor
+    # vendor_subtotal = 0
+    # k = {}
+    # fooditem = [Product.objects.get(pk=i.fooditem.id, vendor_id__in=vendor_ids) for i in cart_items]
+    # for i, j in zip(cart_items, fooditem):
+    #     v_id = j.vendor.id
+    #     if v_id in k:
+    #         vendor_subtotal = k[v_id]
+    #         vendor_subtotal += j.price * i.quantity
+    #         k[v_id] = vendor_subtotal
+    #     else:
+    #         vendor_subtotal = j.price * i.quantity
+    #         k[v_id] = vendor_subtotal
+            
+    # print(k)
+    get_tax = Tax.objects.filter(is_active=True)
+    total_data = {}
+    vendor_subtotals = {}
+    fooditems = [Product.objects.get(pk=i.fooditem.id, vendor_id__in=vendor_ids) for i in cart_items]
+
+    # Calculate vendor subtotals
+    for i, j in zip(cart_items, fooditems):
+        v_id = j.vendor.id
+        if v_id in vendor_subtotals:
+            vendor_subtotals[v_id] += j.price * i.quantity
+        else:
+            vendor_subtotals[v_id] = j.price * i.quantity
+
+    # Calculate tax data and construct total data
+    for v_id, sub in vendor_subtotals.items():
+        tax_dict = {}
+        for tax in get_tax:
+            tax_type = tax.tax_type
+            tax_percentage = tax.tax_percentage
+            tax_amount = round((tax_percentage * sub) / 100, 2)
+            tax_dict[tax_type] = {str(tax_percentage): str(tax_amount)}
+        
+        total_data[v_id] = {str(sub): str(tax_dict)}
+
+# Print the total data
+    # print(total_data)
+
+    
+    # calculating the subtotal for each vendor using list comprehension and dictionary comprehension
+    # vendor_subtotals = {}
+    # fooditems = [Product.objects.get(pk=i.fooditem.id, vendor_id__in=vendor_ids) for i in cart_items]
+    # for i, j in zip(cart_items, fooditems):
+    #     v_id = j.vendor.id
+    #     if v_id in vendor_subtotals:
+    #         vendor_subtotals[v_id] += j.price * i.quantity
+    #     else:
+    #         vendor_subtotals[v_id] = j.price * i.quantity
+
+    # for v_id, sub in vendor_subtotals.items():
+    #     print(f'Vendor {v_id} Subtotal: {sub}')
+    
     subtotal = get_cart_amount(request)['subtotal']
     total_tax = get_cart_amount(request)['tax']
     grand_total = get_cart_amount(request)['grand_total']
@@ -41,10 +100,12 @@ def PlaceOrder(request):
             order.total = grand_total
             order.tax_data = json.dumps(tax_data)
             order.total_tax = total_tax
+            order.total_data = json.dumps(total_data)
             order.payment_method = request.POST['payment-method']
             # order id cannot be created unless the save function is called 
             order.save()
             order.order_number = generate_order_number(order.id)
+            order.vendors.add(*vendor_ids) #add the vendors for each order
             order.save()
             context = {
                 'order': order,

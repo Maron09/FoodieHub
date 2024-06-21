@@ -11,6 +11,8 @@ from django.core.exceptions import PermissionDenied
 from vendor.models import *
 from django.template.defaultfilters import slugify
 
+import datetime
+
 # Restrict the vendor from accessing the customer page
 def check_role_vendor(user):
     if user.role == 1:
@@ -147,7 +149,7 @@ def myAccount(request):
 @login_required(login_url='login')
 @user_passes_test(check_role_customer)
 def customerDashboard(request):
-    orders = Order.objects.filter(user=request.user, is_ordered=True)
+    orders = Order.objects.filter(user=request.user, is_ordered=True).order_by('-created_at')
     recent_orders = orders[:5]
     order_count = orders.count()
     context = {
@@ -162,8 +164,32 @@ def customerDashboard(request):
 @user_passes_test(check_role_vendor)
 def vendorDashboard(request):
     vendor = Vendor.objects.get(user= request.user)
+    orders = Order.objects.filter(vendors__in=[vendor.id], is_ordered=True).order_by('-created_at') # The manytomany field
+    order_count = orders.count()
+    recent_orders = orders[:10]
+    
+    # calculate month revenue
+    # first get the current month
+    current_month = datetime.datetime.now().month
+    
+    # second get the orders and filter by vendor and created at
+    current_month_orders = orders.filter(vendors__in=[vendor.id], created_at__month=current_month)
+    
+    current_month_revenue = 0
+    for i in current_month_orders:
+        current_month_revenue += i.get_total_by_vendor()['grand_total']
+    
+    # calculate total revenue
+    total_revenue = 0
+    for i in orders:
+        total_revenue += i.get_total_by_vendor()['grand_total']
     context = {
-        'vendor': vendor
+        'vendor': vendor,
+        'orders': orders,
+        'order_count': order_count,
+        'recent_orders': recent_orders,
+        'total_revenue': round((total_revenue), 2),
+        'current_month_revenue': round((current_month_revenue), 2)
     }
     return render(request, 'accounts/vendor_dashboard.html', context)
 

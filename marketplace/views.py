@@ -8,6 +8,7 @@ from menu.models import *
 from django.db.models import Prefetch
 from .models import *
 from .context_processors import *
+from .middlewares import *
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.contrib.gis.geos import GEOSGeometry
@@ -64,7 +65,7 @@ def vendor_detail(request, vendor_slug):
 
 def addToCart(request, food_id):
     if request.user.is_authenticated:
-        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        if request.is_ajax():
             # check if food exists
             try:
                 fooditem = Product.objects.get(id=food_id)
@@ -102,7 +103,7 @@ def addToCart(request, food_id):
 
 def decreaseCart(request, food_id):
     if request.user.is_authenticated:
-        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        if request.is_ajax():
             try:
                 fooditem = Product.objects.get(id=food_id)
                 checkCart = Cart.objects.filter(user=request.user, fooditem=fooditem).first()
@@ -138,7 +139,7 @@ def cartPage(request):
 
 def deleteItem(request, cart_id):
     if request.user.is_authenticated:
-        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        if request.is_ajax():
             try:
                 cart_item = Cart.objects.filter(user=request.user, id=cart_id).first()
                 if cart_item:

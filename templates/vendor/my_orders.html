@@ -4,19 +4,19 @@
 {% block content %}
 <!-- Main Section Start -->
 <div class="main-section">
-    {% include 'customers/cover.html' %}
+    {% include 'includes/cover_page.html' %}
     <div class="page-section account-header buyer-logged-in">
         <div class="container">
             <div class="row">
                 <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
                     <!-- Load the sidebar -->
-                    {% include 'includes/c_sidebar.html' %}
+                    {% include 'includes/v_sidebar.html' %}
                 </div>
                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                     <div class="user-dashboard loader-holder">
                         <div class="user-holder">
                             
-                            <h5 class="text-uppercase">your orders</h5>
+                            <h5 class="text-uppercase">my orders</h5>
                             
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -36,12 +36,12 @@
                                                 <tbody>
                                                     {% for order in orders %}
                                                     <tr>
-                                                        <td><b><a class="text-dark" href="{% url 'order_details' order.order_number %}">{{order.order_number}}</a></b></td>
+                                                        <td><b><a class="text-dark" href="{% url 'vendor_order_detail' order.order_number %}">{{order.order_number}}</a></b></td>
                                                         <td>{{order.name}}</td>
-                                                        <td>${{order.total}}</td>
+                                                        <td>${{order.get_total_by_vendor.grand_total}}</td>
                                                         <td>{{order.status}}</td>
                                                         <td>{{order.created_at}}</td>
-                                                        <td><a href="{% url 'order_details' order.order_number %}" class="btn btn-danger">Details</a></td>
+                                                        <td><a href="{% url 'vendor_order_detail' order.order_number %}" class="btn btn-danger">Details</a></td>
                                                     </tr>
                                                     {% endfor %}
                                                 </tbody>
