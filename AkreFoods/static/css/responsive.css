@@ -1,0 +1,44 @@
+@media only screen and (max-width: 480px){
+    a.get-start-btn{
+        display: block;
+        margin-top: 15px !important;
+        margin-left: 0 !important;
+        border: 2px solid #0000;
+    }
+    .main-search{
+        padding-top: 100px !important;
+        padding-bottom: 50px !important;
+        background-position: left  !important;;
+    }
+    .user-dashboard{
+        width: 100% !important;
+    }
+    .menu-itam-holder .quantity{
+        right: 0 !important;
+        margin-top: -30px;
+    }
+    .card{
+        margin-top: 10px !important;
+    }
+    .dt-length{
+        display: block !important;
+        margin-bottom: 20px !important;
+        align-items: center !important;
+        justify-items: center;
+    }
+    .dt-search{
+        display: block !important;
+        margin-bottom: 20px !important;
+        align-items: center !important;
+        justify-items: center;
+    }
+    .form-control{
+        box-shadow: none !important;
+    }
+    .table.opening_hours{
+        width: auto !important;
+    }
+    .table td{
+        padding: 0.5rem !important;
+    }
+}
