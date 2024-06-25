@@ -34,8 +34,9 @@ def send_verification_email(request, user, mail_subject, email_template):
     })
     to_email = user.email
     with mail.get_connection() as connection:
-        mail.EmailMessage(mail_subject, message, from_email, to=[to_email], connection=connection).send(fail_silently=False)
-
+        email = mail.EmailMessage(mail_subject, message, from_email, [to_email], connection=connection)
+        email.content_subtype = 'html'  # Set the content_subtype to 'html'
+        email.send(fail_silently=False) 
 
 def send_notification(mail_subject, mail_template, context):
     from_email = settings.DEFAULT_FROM_EMAIL
@@ -49,4 +50,6 @@ def send_notification(mail_subject, mail_template, context):
     else:
         to_email = context['to_email']
     with mail.get_connection() as connection:
-        mail.EmailMessage(mail_subject, message, from_email, to=to_email, connection=connection).send(fail_silently=False)
+        email = mail.EmailMessage(mail_subject, message, from_email, to_email, connection=connection)
+        email.content_subtype = 'html'  # Set the content_subtype to 'html'
+        email.send(fail_silently=False) 
